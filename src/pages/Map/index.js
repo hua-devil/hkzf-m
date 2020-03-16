@@ -34,6 +34,41 @@ export default class Map extends Component {
       map.addControl(new BMap.ScaleControl());   //比例尺  
       // map.addControl(new BMap.OverviewMapControl());  //右下角小地图  
       map.addControl(new BMap.MapTypeControl());    //切换地图 卫星  三维 控件
+
+
+      // 创建一个最简单得文字覆盖物
+      var opts = {
+        position : point,    // 指定文本标注所在的地理位置
+        offset   : new BMap.Size(30, -30)    //设置文本偏移量
+      }
+      // 方法1
+      // 创建label    类似div最外层盒子
+      // var label = new BMap.Label(
+      //   `<div class="${styles.bubble}">
+      //       <p class="${styles.name}">朝阳区</p>
+      //       <p>10套</p>
+      //   </div>`, opts);  // 创建文本标注对象
+
+      // 方法2
+      var label = new BMap.Label('', opts);  // 创建文本标注对象
+      label.setContent(`
+        <div class="${styles.bubble}">
+            <p class="${styles.name}">朝阳区</p>
+            <p>10套</p>
+      </div>`)
+        // 覆盖物样式
+        // const labelStyle = {
+        //   cursor: 'pointer',
+        //   border: '0px solid rgb(255, 0, 0)',
+        //   padding: '0px',
+        //   whiteSpace: 'nowrap',
+        //   fontSize: '12px',
+        //   color: 'rgb(255, 255, 255)',
+        //   textAlign: 'center'
+        // }
+        label.setStyle({
+         });
+      map.addOverlay(label);  
     }, dingwei.label);
 
 

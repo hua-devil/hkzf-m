@@ -9,3 +9,13 @@
 .navbar {
   z-index: 99;
 }
+
+.house {
+  width: 150px;
+  height: 150px;
+  background-color: pink;
+  border-radius: 50%;
+  color: #fff;
+  text-align: center;
+  line-height: 50px;
+}

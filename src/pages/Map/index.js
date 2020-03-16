@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 // 在map组件 = 使用百度地图
 // 注意 1 原生js 是自带定位的
 // navigator.geolocation.getCurrentPosition((position)=>{
@@ -13,6 +14,7 @@ import { getCurrentCity } from '../../utils/index'
 let BMap = window.BMap
 export default class Map extends Component {
   componentDidMount(){
+    // 获取所有区得房子
     this.initMap()
   }
   async initMap(){
@@ -26,7 +28,7 @@ export default class Map extends Component {
     // 创建地址解析器实例
     var myGeo = new BMap.Geocoder();
     // 将地址解析结果显示在地图上,并调整地图视野
-    myGeo.getPoint(dingwei.label, (point)=>{
+    myGeo.getPoint(dingwei.label, async (point)=>{
       console.log('城市转换得坐标点',point);
       // 地图初始化，同时设置地图展示级别
       map.centerAndZoom(point, 11);//放大缩小级别11
@@ -35,6 +37,9 @@ export default class Map extends Component {
       // map.addControl(new BMap.OverviewMapControl());  //右下角小地图  
       map.addControl(new BMap.MapTypeControl());    //切换地图 卫星  三维 控件
 
+      // 先获取所有区得数据
+      let res = await axios.get('http://api-haoke-dev.itheima.net/area/map?id='+dingwei.value)
+      console.log('房子套数',res);
 
       // 创建一个最简单得文字覆盖物
       var opts = {
@@ -66,9 +71,11 @@ export default class Map extends Component {
         //   color: 'rgb(255, 255, 255)',
         //   textAlign: 'center'
         // }
-        label.setStyle({
-         });
-      map.addOverlay(label);  
+        label.setStyle({});
+        label.addEventListener('click',  () => {
+          console.log('覆盖物被点击了');
+        })
+        map.addOverlay(label);  
     }, dingwei.label);
 
 

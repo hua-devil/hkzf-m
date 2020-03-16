@@ -23,7 +23,7 @@ export default class Map extends Component {
     let dingwei = await getCurrentCity()
     console.log('定位城市',dingwei);  // label是城市  value是id
     // 创建地图实例
-    var map = new BMap.Map("container")
+    this.map = new BMap.Map("container")
     // 2.城市名转换成坐标 经纬度
     // 创建地址解析器实例
     var myGeo = new BMap.Geocoder();
@@ -31,21 +31,48 @@ export default class Map extends Component {
     myGeo.getPoint(dingwei.label, async (point)=>{
       console.log('城市转换得坐标点',point);
       // 地图初始化，同时设置地图展示级别
-      map.centerAndZoom(point, 11);//放大缩小级别11
-      map.addControl(new BMap.NavigationControl());   //缩放控件   
-      map.addControl(new BMap.ScaleControl());   //比例尺  
+      this.map.centerAndZoom(point, 11);//放大缩小级别11
+      this.map.addControl(new BMap.NavigationControl());   //缩放控件   
+      this.map.addControl(new BMap.ScaleControl());   //比例尺  
       // map.addControl(new BMap.OverviewMapControl());  //右下角小地图  
-      map.addControl(new BMap.MapTypeControl());    //切换地图 卫星  三维 控件
-
-      // 先获取所有区得数据
-      let res = await axios.get('http://api-haoke-dev.itheima.net/area/map?id='+dingwei.value)
-      console.log('房子套数',res);
-
+      this.map.addControl(new BMap.MapTypeControl());    //切换地图 卫星  三维 控件
+      this.renderOVerlays(dingwei.value)
+    },dingwei.label)
+  }
+  async renderOVerlays(id){
+    // 先获取所有区得数据
+    let res = await axios.get('http://api-haoke-dev.itheima.net/area/map?id='+id)
+    console.log('房子套数',res);
+    
+    res.data.body.forEach((item) => {
       // 创建一个最简单得文字覆盖物
+      // 每个数据都有自己得经纬度，需要用百度方法转换一下普通得经纬度
+      let point = new BMap.Point(item.coord.longitude,item.coord.latitude)
       var opts = {
         position : point,    // 指定文本标注所在的地理位置
-        offset   : new BMap.Size(30, -30)    //设置文本偏移量
+        offset   : new BMap.Size(-35, -30)    //设置文本偏移量  修改圈圈位置
       }
+      var label = new BMap.Label('', opts);  // 创建文本标注对象
+      label.setContent(`
+        <div class="${styles.bubble}">
+            <p class="${styles.name}">${item.label}</p>
+            <p>${item.count}套</p>
+      </div>`)
+        label.setStyle({
+          border:'none',
+          padding:0
+        });
+        label.addEventListener('click',() => {
+          console.log('覆盖物被点击了');
+        })
+      this.map.addOverlay(label);  
+    })
+    /* 
+      // 创建一个最简单得文字覆盖物
+      // var opts = {
+      //   position : point,    // 指定文本标注所在的地理位置
+      //   offset   : new BMap.Size(30, -30)    //设置文本偏移量
+      // }
       // 方法1
       // 创建label    类似div最外层盒子
       // var label = new BMap.Label(
@@ -77,7 +104,7 @@ export default class Map extends Component {
         })
         map.addOverlay(label);  
     }, dingwei.label);
-
+    
 
     // // 创建地图实例
     // var map = new BMap.Map("container")
@@ -85,6 +112,7 @@ export default class Map extends Component {
     // var point = new BMap.Point(116.404, 39.915)
     // 地图初始化，同时设置地图展示级别
     // map.centerAndZoom(point, 15);
+    */
   }
   render() {
     return <div className="map">

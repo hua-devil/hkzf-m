@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import { NavBar, Icon ,Toast } from 'antd-mobile';
+import { Toast } from 'antd-mobile';
 import './citylist.scss'
 import axios from 'axios'
 import { getCurrentCity } from '../../utils/index.js'

@@ -1,0 +1,13 @@
+.navs{
+  background-color: #fff;
+  padding-top: 10px;
+}
+.navs img{
+  height:48px;
+}
+.navs .am-flexbox-item{
+  text-align: center;
+}
+.navs .am-flexbox-item p{
+  padding: 5px 0;
+}

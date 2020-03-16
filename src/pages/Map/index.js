@@ -30,7 +30,10 @@ export default class Map extends Component {
       console.log('城市转换得坐标点',point);
       // 地图初始化，同时设置地图展示级别
       map.centerAndZoom(point, 11);//放大缩小级别11
-      
+      map.addControl(new BMap.NavigationControl());   //缩放控件   
+      map.addControl(new BMap.ScaleControl());   //比例尺  
+      // map.addControl(new BMap.OverviewMapControl());  //右下角小地图  
+      map.addControl(new BMap.MapTypeControl());    //切换地图 卫星  三维 控件
     }, dingwei.label);
 
 

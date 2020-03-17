@@ -63,7 +63,9 @@ export default class Map extends Component {
           padding:0
         });
         label.addEventListener('click',() => {
-          console.log('覆盖物被点击了');
+          console.log('覆盖物被点击了id',item.value);
+          this.map.centerAndZoom(point, 13)
+          this.renderOVerlays(item.value)
         })
       this.map.addOverlay(label);  
     })

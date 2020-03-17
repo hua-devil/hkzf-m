@@ -4,16 +4,16 @@
 // 如果不使用promise 函数是异步的
 import axios from 'axios'
 export let getCurrentCity=()=>{
-  console.log('封装执行了')
+  // console.log('封装执行了')
   let city = JSON.parse(localStorage.getItem('my-city'))
   if(!city){
     return new Promise(function(resolve,reject){
       var myCity = new window.BMap.LocalCity();
       myCity.get(async (result)=>{
         var cityName = result.name;  // 只是名字
-        console.log("当前定位城市:"+cityName)
+        // console.log("当前定位城市:"+cityName)
         let res = await axios.get('http://api-haoke-dev.itheima.net/area/info?name='+cityName)
-        console.log('定位城市',res);
+        // console.log('定位城市',res);
         localStorage.setItem('my-city',JSON.stringify(res.data.body))
         resolve(res.data.body)
       })

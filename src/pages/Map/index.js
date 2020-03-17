@@ -13,6 +13,10 @@ import NavHeader from '../../components/NavHeader'
 import { getCurrentCity } from '../../utils/index'
 let BMap = window.BMap
 export default class Map extends Component {
+  state={
+    count:'0',  //小区房子套数
+    list:[]   //小区得房子数组
+  }
   componentDidMount(){
     // 获取所有区得房子
     this.initMap()
@@ -21,7 +25,7 @@ export default class Map extends Component {
     // 引入全局变量要加window
     // 1.获取当前定位城市
     let dingwei = await getCurrentCity()
-    console.log('定位城市',dingwei);  // label是城市  value是id
+    // console.log('定位城市',dingwei);  // label是城市  value是id
     // 创建地图实例
     this.map = new BMap.Map("container")
     // 2.城市名转换成坐标 经纬度
@@ -29,20 +33,20 @@ export default class Map extends Component {
     var myGeo = new BMap.Geocoder();
     // 将地址解析结果显示在地图上,并调整地图视野
     myGeo.getPoint(dingwei.label, async (point)=>{
-      console.log('城市转换得坐标点',point);
+      // console.log('城市转换得坐标点',point);
       // 地图初始化，同时设置地图展示级别
       this.map.centerAndZoom(point, 11);//放大缩小级别11
       this.map.addControl(new BMap.NavigationControl());   //缩放控件   
       this.map.addControl(new BMap.ScaleControl());   //比例尺  
       // map.addControl(new BMap.OverviewMapControl());  //右下角小地图  
       this.map.addControl(new BMap.MapTypeControl());    //切换地图 卫星  三维 控件
-      this.renderOVerlays(dingwei.value)
+      this.renderOverlays(dingwei.value,'cycle')
     },dingwei.label)
   }
-  async renderOVerlays(id){
+  async renderOverlays(id,type){
     // 先获取所有区得数据
     let res = await axios.get('http://api-haoke-dev.itheima.net/area/map?id='+id)
-    console.log('房子套数',res);
+    // console.log('房子套数',res);
     
     res.data.body.forEach((item) => {
       // 创建一个最简单得文字覆盖物
@@ -53,20 +57,48 @@ export default class Map extends Component {
         offset   : new BMap.Size(-35, -30)    //设置文本偏移量  修改圈圈位置
       }
       var label = new BMap.Label('', opts);  // 创建文本标注对象
-      label.setContent(`
-        <div class="${styles.bubble}">
+      if(type === 'cycle'){
+        label.setContent(
+          `<div class="${styles.bubble}">
             <p class="${styles.name}">${item.label}</p>
             <p>${item.count}套</p>
-      </div>`)
-        label.setStyle({
-          border:'none',
-          padding:0
-        });
-        label.addEventListener('click',() => {
-          console.log('覆盖物被点击了id',item.value);
+          </div>`
+        )
+      }else if(type === 'rect'){
+        label.setContent(`
+        <div class="${styles.rect}">
+          <span class="${styles.housename}">天通苑小区</span>
+          <span class="${styles.housenum}">100套</span>
+          <i class="${styles.arrow}"></i>
+        </div>`
+        )
+      }
+      label.setStyle({
+        border:'none',
+        padding:0
+      });
+      label.addEventListener('click',() => {
+        // console.log('覆盖物被点击了id',item.value);
+        // console.log('此时地图级别',this.map.getZoom());
+        // 11进入13   13进入15  15不放大发送请求显示小区房子列表
+        let zoom = this.map.getZoom()
+        if(zoom===11){
           this.map.centerAndZoom(point, 13)
-          this.renderOVerlays(item.value)
-        })
+          setTimeout(()=>{
+            this.map.clearOverlays();
+          },0)
+          this.renderOverlays(item.value,'cycle')
+        }else if(zoom===13){
+          this.map.centerAndZoom(point, 15)
+          setTimeout(()=>{
+            this.map.clearOverlays();
+          },0)
+          this.renderOverlays(item.value,'rect')
+        }else if(zoom===15){
+          // console.log('15级');
+          this.getHouselist(item.value)
+        }
+      })
       this.map.addOverlay(label);  
     })
     /* 
@@ -116,12 +148,53 @@ export default class Map extends Component {
     // map.centerAndZoom(point, 15);
     */
   }
+  async getHouselist(id){
+    // http://api-haoke-dev.itheima.net/houses?cityId=区域id
+    let res = await axios.get('http://api-haoke-dev.itheima.net/houses?cityId='+id)
+    console.log('小区列表',res);
+    this.setState({
+      count:res.data.body.count,
+      list:res.data.body.list
+    })
+  }
   render() {
     return <div className="map">
         {/* 顶部导航栏 */}
         <NavHeader>地图找房</NavHeader>
         {/* 创建div用来显示地图 */}
         <div id="container"></div>
+        {/* 房子列表html */}
+        <div className={[styles.houseList,  styles.show ].join(' ')}>
+          {/* 头部 */}
+          <div className={styles.titleWrap}>
+              <h1 className={styles.listTitle}>房屋列表</h1>
+              <a className={styles.titleMore} href="/house/list">
+                  更多房源
+              </a>
+          </div>
+          {/* 列表 */}
+          <div className={styles.houseItems}>
+            {/* 一个房子 */}
+            <div className={styles.house}>
+                <div className={styles.imgWrap}>
+                    <img className={styles.img} src={`http://localhost:8080/newImg/7bl2kl92b.jpg`} alt="" />
+                </div>
+                <div className={styles.content}>
+                    <h3 className={styles.title}>整租 · 哈哈 3室1厅 7000元</h3>
+                    <div className={styles.desc}>三室/112/南|北/世嘉博苑</div>
+                    <div>
+                        {/* ['近地铁', '随时看房'] */}
+                                <span className={[styles.tag,styles.tag1 ].join(' ')} >
+                                    近地铁
+                                </span>
+                    </div>
+                    <div className={styles.price}>
+                        <span className={styles.priceNum}>7000</span> 元/月
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
       </div>
   }
 }

@@ -12,6 +12,7 @@ import styles from './map.module.css'
 import NavHeader from '../../components/NavHeader'
 // 导入定位城市
 import { getCurrentCity } from '../../utils/index'
+import { API } from '../../utils/api'
 let BMap = window.BMap
 export default class Map extends Component {
   state={
@@ -174,7 +175,7 @@ export default class Map extends Component {
   async getHouselist(id){
     // http://api-haoke-dev.itheima.net/houses?cityId=区域id
     Toast.loading('正在加载....',0) 
-    let res = await axios.get('http://api-haoke-dev.itheima.net/houses?cityId='+id)
+    let res = await API.get('http://api-haoke-dev.itheima.net/houses?cityId='+id)
     console.log('小区列表',res);
     Toast.hide()
     this.setState({

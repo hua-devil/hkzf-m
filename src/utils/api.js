@@ -4,7 +4,8 @@ import axios from 'axios'
 // 第一种写法
 // axios.defaults.baseURL = 'http://api-haoke-dev.itheima.net'
 // 第二种写法
+import {BASE_URL} from './url'
 const API = axios.create({
-  baseURL : 'http://api-haoke-dev.itheima.net'
+  baseURL : BASE_URL
 })
 export {API}

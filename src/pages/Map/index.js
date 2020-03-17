@@ -15,7 +15,8 @@ let BMap = window.BMap
 export default class Map extends Component {
   state={
     count:'0',  //小区房子套数
-    list:[]   //小区得房子数组
+    list:[] ,  //小区得房子数组
+    isshow:false
   }
   componentDidMount(){
     // 获取所有区得房子
@@ -42,6 +43,13 @@ export default class Map extends Component {
       this.map.addControl(new BMap.MapTypeControl());    //切换地图 卫星  三维 控件
       this.renderOverlays(dingwei.value,'cycle')
     },dingwei.label)
+
+    // 绑定地图移动事件
+    this.map.addEventListener('movestart',()=>{
+      this.setState({
+        isshow:false
+      })
+    })
   }
   async renderOverlays(id,type){
     // 先获取所有区得数据
@@ -154,7 +162,30 @@ export default class Map extends Component {
     console.log('小区列表',res);
     this.setState({
       count:res.data.body.count,
-      list:res.data.body.list
+      list:res.data.body.list,
+      isshow:true
+    })
+  }
+  renderHouselist(){
+    return this.state.list.map((item)=>{
+      return <div className={styles.house} key={item.houseCode}>
+        <div className={styles.imgWrap}>
+            <img className={styles.img} src={`http://api-haoke-dev.itheima.net${item.houseImg}`} alt="" />
+        </div>
+        <div className={styles.content}>
+            <h3 className={styles.title}>{item.title}</h3>
+            <div className={styles.desc}>{item.desc}</div>
+            <div>
+              {/* ['近地铁', '随时看房'] */}
+              {item.tags.map((tagItem,index)=>{
+                return <span key={index} className={[styles.tag,styles.tag1 ].join(' ')} >{tagItem}</span>
+              })}          
+            </div>
+            <div className={styles.price}>
+              <span className={styles.priceNum}>{item.price}</span> 元/月
+            </div>
+        </div>
+      </div>
     })
   }
   render() {
@@ -164,7 +195,7 @@ export default class Map extends Component {
         {/* 创建div用来显示地图 */}
         <div id="container"></div>
         {/* 房子列表html */}
-        <div className={[styles.houseList,  styles.show ].join(' ')}>
+        <div className={[styles.houseList,  this.state.isshow ? styles.show : ''].join(' ')}>
           {/* 头部 */}
           <div className={styles.titleWrap}>
               <h1 className={styles.listTitle}>房屋列表</h1>
@@ -175,24 +206,7 @@ export default class Map extends Component {
           {/* 列表 */}
           <div className={styles.houseItems}>
             {/* 一个房子 */}
-            <div className={styles.house}>
-                <div className={styles.imgWrap}>
-                    <img className={styles.img} src={`http://localhost:8080/newImg/7bl2kl92b.jpg`} alt="" />
-                </div>
-                <div className={styles.content}>
-                    <h3 className={styles.title}>整租 · 哈哈 3室1厅 7000元</h3>
-                    <div className={styles.desc}>三室/112/南|北/世嘉博苑</div>
-                    <div>
-                        {/* ['近地铁', '随时看房'] */}
-                                <span className={[styles.tag,styles.tag1 ].join(' ')} >
-                                    近地铁
-                                </span>
-                    </div>
-                    <div className={styles.price}>
-                        <span className={styles.priceNum}>7000</span> 元/月
-                    </div>
-                </div>
-            </div>
+            {this.renderHouselist()}
           </div>
         </div>
       </div>

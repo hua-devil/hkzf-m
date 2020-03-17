@@ -74,7 +74,7 @@ export default class Index extends Component {
   }
   async getSwiper(){
     let res = await axios.get('http://api-haoke-dev.itheima.net/home/swiper')
-    console.log('轮播图',res)
+    // console.log('轮播图',res)
     this.setState({
       swiperData:res.data.body
     },()=>{
@@ -87,7 +87,7 @@ export default class Index extends Component {
   // 获取租房小组
   async getGroups(){
     let res = await axios.get('http://api-haoke-dev.itheima.net/home/groups?area=AREA%7C88cff55c-aaa4-e2e0')
-    console.log('租房小组数据',res);
+    // console.log('租房小组数据',res);
     if(res.data.status===200){
       this.setState({
         groups:res.data.body
@@ -97,7 +97,7 @@ export default class Index extends Component {
   // 获取最新资讯
   async getNews(){
     let res = await axios.get('http://api-haoke-dev.itheima.net/home/news?area=AREA%7C88cff55c-aaa4-e2e0')
-    console.log('最新资讯',res);
+    // console.log('最新资讯',res);
     if(res.data.status===200){
       this.setState({
         news:res.data.body

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+import { Toast } from 'antd-mobile';
 // 在map组件 = 使用百度地图
 // 注意 1 原生js 是自带定位的
 // navigator.geolocation.getCurrentPosition((position)=>{
@@ -52,10 +53,11 @@ export default class Map extends Component {
     })
   }
   async renderOverlays(id,type){
+    Toast.loading('正在加载....',0)  // 0代表不隐藏  请求成手动隐藏
     // 先获取所有区得数据
     let res = await axios.get('http://api-haoke-dev.itheima.net/area/map?id='+id)
     // console.log('房子套数',res);
-    
+    Toast.hide()
     res.data.body.forEach((item) => {
       // 创建一个最简单得文字覆盖物
       // 每个数据都有自己得经纬度，需要用百度方法转换一下普通得经纬度
@@ -75,8 +77,8 @@ export default class Map extends Component {
       }else if(type === 'rect'){
         label.setContent(`
         <div class="${styles.rect}">
-          <span class="${styles.housename}">天通苑小区</span>
-          <span class="${styles.housenum}">100套</span>
+          <span class="${styles.housename}">${item.label}</span>
+          <span class="${styles.housenum}">${item.count}套</span>
           <i class="${styles.arrow}"></i>
         </div>`
         )
@@ -85,7 +87,7 @@ export default class Map extends Component {
         border:'none',
         padding:0
       });
-      label.addEventListener('click',() => {
+      label.addEventListener('click',(e) => {
         // console.log('覆盖物被点击了id',item.value);
         // console.log('此时地图级别',this.map.getZoom());
         // 11进入13   13进入15  15不放大发送请求显示小区房子列表
@@ -104,6 +106,19 @@ export default class Map extends Component {
           this.renderOverlays(item.value,'rect')
         }else if(zoom===15){
           // console.log('15级');
+          // y移动得距离=y点击得坐标-中心y坐标
+          // x移动得距离=x点击得坐标-中心x坐标
+          console.log('e',e);
+          // 获取点击得x,y坐标
+          let clickX = e.changedTouches[0].clientX
+          let clickY = e.changedTouches[0].clientY
+          // 中心点x坐标=屏幕宽度/2
+          // 中心点y坐标=(屏幕高度-房子列表高度)/2
+          let centerX= window.innerWidth/2
+          let centerY= (window.innerHeight-330)/2
+          let distenceX = clickX-centerX
+          let distenceY = clickY-centerY
+          this.map.panBy(-distenceX,-distenceY)
           this.getHouselist(item.value)
         }
       })
@@ -158,8 +173,10 @@ export default class Map extends Component {
   }
   async getHouselist(id){
     // http://api-haoke-dev.itheima.net/houses?cityId=区域id
+    Toast.loading('正在加载....',0) 
     let res = await axios.get('http://api-haoke-dev.itheima.net/houses?cityId='+id)
     console.log('小区列表',res);
+    Toast.hide()
     this.setState({
       count:res.data.body.count,
       list:res.data.body.list,

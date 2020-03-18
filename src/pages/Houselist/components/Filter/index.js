@@ -3,8 +3,10 @@ import React, { Component } from 'react'
 import FilterTitle from '../FilterTitle'
 import FilterPicker from '../FilterPicker'
 import FilterMore from '../FilterMore'
-
+import {API} from '../../../../utils/api'
 import styles from './index.module.css'
+import { getCurrentCity } from '../../../../utils/index'
+
 // 数据要写在父组件  四个都要判断
 const titleStatus = {
   area:false,
@@ -15,7 +17,19 @@ const titleStatus = {
 export default class Filter extends Component {
   state={
     titleSelectedStatus:titleStatus,
-    openType:''
+    openType:'',
+    filterData:[]
+  }
+  componentDidMount(){
+    this.getFilterData()
+  }
+  async getFilterData(){
+    let dingwei = await getCurrentCity()
+    let res = await API.get('/houses/condition?id='+dingwei.value)
+    console.log("筛选数据",res)
+    this.setState({
+      filterData:res.data.body
+    })
   }
   onTitltClick=(type)=>{
     console.log('执行了filter',type);
@@ -44,7 +58,21 @@ export default class Filter extends Component {
   renderPicker=()=>{
     let {openType} = this.state
     if(openType==='area'||openType==='mode'||openType==='price'){
-      return <FilterPicker onCancel={this.onCancel} onSave={this.onSave} />
+      let {area,subway,rentType,price} = this.state.filterData
+      let data=[]
+      // eslint-disable-next-line default-case
+      switch(openType){
+        case 'area' :
+          data=[area,subway]
+          break;
+        case 'mode':
+          data=rentType
+          break;
+        case 'price':
+          data=price
+          break;
+      }
+      return <FilterPicker data={data} onCancel={this.onCancel} onSave={this.onSave} />
     }else{
       return null
     }

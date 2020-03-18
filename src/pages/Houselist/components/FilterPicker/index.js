@@ -91,7 +91,7 @@ export default class FilterPicker extends Component {
   render() {
     return (
       <>
-        {/* 选择器组件： */}
+        {/* 选择器组件： data=数组 value={默认选中得值} */}
         <PickerView data={province} value={null} cols={3} />
 
         {/* 底部按钮 */}

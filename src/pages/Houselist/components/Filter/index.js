@@ -49,8 +49,8 @@ export default class Filter extends Component {
     })
   }
   // 父  点击确定得函数
-  onSave=()=>{
-    console.log('确认');
+  onSave=(value)=>{
+    console.log('确认的value值',value);
     this.setState({
       openType:''
     })

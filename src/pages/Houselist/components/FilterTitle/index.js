@@ -11,17 +11,24 @@ const titleList = [
   { title: '租金', type: 'price' },
   { title: '筛选', type: 'more' }
 ]
-
-export default function FilterTitle() {
+// 1.class组件时this.props  2. 函数组件props接受传来得值
+export default function FilterTitle(props) {
+  let {titleSelectedStatus} = props
+  console.log(titleSelectedStatus);
   return (
     <Flex align="center" className={styles.root}>
-      <Flex.Item>
+      {/* 循环生成四个标题 */}
+      {titleList.map((item,index) => {
+        let isSelect = titleSelectedStatus[item.type]
+        return <Flex.Item key={index}>
         {/* 选中类名： selected */}
-        <span className={[styles.dropdown, styles.selected].join(' ')}>
-          <span>区域</span>
+        <span className={[styles.dropdown, isSelect?styles.selected:''].join(' ')}>
+          <span>{item.title}</span>
           <i className="iconfont icon-arrow" />
         </span>
       </Flex.Item>
+      })}
+      
     </Flex>
   )
 }

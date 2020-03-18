@@ -5,8 +5,17 @@ import FilterPicker from '../FilterPicker'
 import FilterMore from '../FilterMore'
 
 import styles from './index.module.css'
-
+// 数据要写在父组件  四个都要判断
+const titleSelectedStatus = {
+  area:false,
+  mode:false,
+  price:true,
+  more:false
+}
 export default class Filter extends Component {
+  state={
+    titleSelectedStatus
+  }
   render() {
     return (
       <div className={styles.root}>
@@ -15,7 +24,7 @@ export default class Filter extends Component {
 
         <div className={styles.content}>
           {/* 标题栏 */}
-          <FilterTitle />
+          <FilterTitle titleSelectedStatus={this,this.state.titleSelectedStatus} />
 
           {/* 前三个菜单对应的内容： */}
           {/* <FilterPicker /> */}

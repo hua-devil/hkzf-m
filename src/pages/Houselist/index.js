@@ -22,7 +22,7 @@ export default class Houselist extends Component {
           <i className='iconfont icon-back'></i>
           <SearchHeader cityname={this.state.cityname}></SearchHeader>
         </div>
-        {/* <Filter></Filter> */}
+        <Filter></Filter>
       </div>
     )
 

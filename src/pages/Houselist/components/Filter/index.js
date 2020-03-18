@@ -60,19 +60,23 @@ export default class Filter extends Component {
     if(openType==='area'||openType==='mode'||openType==='price'){
       let {area,subway,rentType,price} = this.state.filterData
       let data=[]
+      let cols=3
       // eslint-disable-next-line default-case
       switch(openType){
         case 'area' :
           data=[area,subway]
+          cols=3
           break;
         case 'mode':
           data=rentType
+          cols=1
           break;
         case 'price':
           data=price
+          cols=1
           break;
       }
-      return <FilterPicker data={data} onCancel={this.onCancel} onSave={this.onSave} />
+      return <FilterPicker cols={cols} data={data} onCancel={this.onCancel} onSave={this.onSave} />
     }else{
       return null
     }

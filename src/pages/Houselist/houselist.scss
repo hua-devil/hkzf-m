@@ -1,0 +1,14 @@
+.header{
+  display: flex;
+  height: 45px;
+  background-color: #eee;
+  align-items: center;
+  padding: 0 10px;
+  .searchBox{
+    position: relative;
+    top:0;
+    .icon-map{
+      color: #00ae66;
+    }
+  }
+}

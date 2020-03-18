@@ -1,0 +1,16 @@
+.header {
+  display: flex;
+  height: 45px;
+  background-color: #eee;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.header .searchBox {
+  position: relative;
+  top: 0;
+}
+
+.header .searchBox .icon-map {
+  color: #00ae66;
+}

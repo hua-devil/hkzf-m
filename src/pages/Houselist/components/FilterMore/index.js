@@ -25,12 +25,13 @@ export default class FilterMore extends Component {
   // 渲染标签
   renderFilters(arr) {
     // 高亮类名： styles.tagActive
-    
-      // <span className={[styles.tag, styles.tagActive].join(' ')}>东北</span>
+    // <span className={[styles.tag, styles.tagActive].join(' ')}>东北</span>
+    // 判断当前的值在不在selectedValues 再就高亮
     return arr.map((item)=>{
+      let isSelcted = this.state.selectedValues.indexOf(item.value)!==-1
       return <span
       key={item.value}
-      className={[styles.tag,].join(' ')}
+      className={[styles.tag, isSelcted?styles.tagActive:''].join(' ')}
       onClick={()=>{
         this.onTagClick(item)
       }}>
@@ -66,7 +67,16 @@ export default class FilterMore extends Component {
         </div>
 
         {/* 底部按钮 */}
-        <FilterFooter className={styles.footer} />
+        <FilterFooter 
+        className={styles.footer} 
+        onCancel={()=>{
+          this.setState({
+            selectedValues:[]
+          })
+        }}
+        onSave={()=>{
+          this.props.onSave(this.state.selectedValues)
+        }} />
       </div>
     )
   }

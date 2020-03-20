@@ -115,7 +115,9 @@ export default class Filter extends Component {
     if(openType==='more'){
       let { roomType,oriented,floor,characteristic } = this.state.filterData
       let data={ roomType,oriented,floor,characteristic }
-      return <FilterMore data={data} />
+      return <FilterMore 
+              data={data}
+              onSave={this.onSave} />
     }
   }
   render() {

@@ -18,7 +18,13 @@ export default class Filter extends Component {
   state={
     titleSelectedStatus:titleStatus,
     openType:'',
-    filterData:[]
+    filterData:{},
+    selectedValues:{
+      area:['area','null'],
+      mode:['null'],
+      price:['null'],
+      more:[]
+    }
   }
   componentDidMount(){
     this.getFilterData()
@@ -51,8 +57,15 @@ export default class Filter extends Component {
   // 父  点击确定得函数
   onSave=(value)=>{
     console.log('确认的value值',value);
+    let type = this.state.openType
     this.setState({
-      openType:''
+      selectedValues:{
+        ...this.state.selectedValues,
+        [type]:value
+      },
+      openType:''    // 隐藏遮罩层
+    },()=>{
+      console.log('修改后',this.state.selectedValues);
     })
   }
   renderPicker=()=>{
@@ -61,6 +74,8 @@ export default class Filter extends Component {
       let {area,subway,rentType,price} = this.state.filterData
       let data=[]
       let cols=3
+      // 获取选择的值 传进去 选中
+      let defaultValue = this.state.selectedValues[openType]
       // eslint-disable-next-line default-case
       switch(openType){
         case 'area' :
@@ -76,7 +91,13 @@ export default class Filter extends Component {
           cols=1
           break;
       }
-      return <FilterPicker cols={cols} data={data} onCancel={this.onCancel} onSave={this.onSave} />
+      return <FilterPicker 
+      key={openType}  //key 唯一的  组件改变就会全部重新创建一遍
+      defaultValue={defaultValue} 
+      cols={cols} 
+      data={data} 
+      onCancel={this.onCancel} 
+      onSave={this.onSave} />
     }else{
       return null
     }
@@ -87,6 +108,14 @@ export default class Filter extends Component {
       return <div className={styles.mask} />
     }else{
       return null
+    }
+  }
+  renderMore=()=>{
+    let {openType} = this.state
+    if(openType==='more'){
+      let { roomType,oriented,floor,characteristic } = this.state.filterData
+      let data={ roomType,oriented,floor,characteristic }
+      return <FilterMore data={data} />
     }
   }
   render() {
@@ -105,6 +134,7 @@ export default class Filter extends Component {
 
           {/* 最后一个菜单对应的内容： */}
           {/* <FilterMore /> */}
+          {this.renderMore()}
         </div>
       </div>
     )

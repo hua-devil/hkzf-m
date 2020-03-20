@@ -88,8 +88,15 @@ const province = [
 ]
 
 export default class FilterPicker extends Component {
-  state={
-    val:null
+  // state={
+  //   val:this.props.defaultValue
+  // }
+  constructor(props){
+    super(props)
+    console.log('constryctor执行了');
+    this.state={
+      val:this.props.defaultValue
+    }
   }
   render() {
     return (

@@ -6,7 +6,7 @@ import styles from './index.module.css'
 
 export default class FilterMore extends Component {
   state={
-    selectedValues:[]
+    selectedValues:this.props.defaultValues
   }
   onTagClick=(item)=>{
     let newValues=[...this.state.selectedValues]

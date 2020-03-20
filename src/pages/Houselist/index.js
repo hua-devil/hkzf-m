@@ -14,6 +14,10 @@ export default class Houselist extends Component {
       cityname:dingwei.label
     })
   }
+  onFilter=(filters)=>{
+    console.log('houselist的onFilter');
+    console.log('houselist收到的filters',filters);
+  }
   render() {
     return (
       <div className='houselist'>
@@ -22,7 +26,7 @@ export default class Houselist extends Component {
           <i className='iconfont icon-back'></i>
           <SearchHeader cityname={this.state.cityname}></SearchHeader>
         </div>
-        <Filter></Filter>
+        <Filter onFilter={this.onFilter}></Filter>
       </div>
     )
 

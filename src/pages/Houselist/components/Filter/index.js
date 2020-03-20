@@ -66,6 +66,19 @@ export default class Filter extends Component {
       openType:''    // 隐藏遮罩层
     },()=>{
       console.log('修改后',this.state.selectedValues);
+      let {area,mode,price,more} = this.state.selectedValues
+      let filters = {}
+      filters.mode = mode[0]
+      filters.price = price[0]
+      filters.more = more.join(",")
+      // area比较复杂
+      const areaKey = area[0]
+      let areaValue = 'null'
+      if(area.length ===3){
+        areaValue =area[2] !== 'null' ? area[2] : area[1]
+       }
+       filters[areaKey] = areaValue
+       this.props.onFilter(filters)
     })
   }
   renderPicker=()=>{
@@ -115,7 +128,9 @@ export default class Filter extends Component {
     if(openType==='more'){
       let { roomType,oriented,floor,characteristic } = this.state.filterData
       let data={ roomType,oriented,floor,characteristic }
+      let defaultValues = this.state.selectedValues['more']
       return <FilterMore 
+              defaultValues={defaultValues}
               data={data}
               onSave={this.onSave} />
     }

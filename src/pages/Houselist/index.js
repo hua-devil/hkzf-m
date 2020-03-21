@@ -78,12 +78,31 @@ export default class Houselist extends Component {
         </div>
     )
   }
-  // 加载更多函数
+  // 加载更多函数  
   loadMoreRows=({ startIndex, stopIndex })=>{
-    return fetch(`path/to/api?startIndex=${startIndex}&stopIndex=${stopIndex}`)
-      .then(response => {
-        // Store response data in list...
+    console.log('开始',startIndex,'结束',stopIndex);
+    return new Promise((resolve,reject)=>{
+      API.get("/houses",{
+        params:{
+          cityId:this.state.cityId,
+          ...this.filters,
+          start:startIndex,
+          end:stopIndex
+        }
+      }).then((res)=>{
+        console.log('加载更多res',res)
+        let newlist = [...this.state.list, ...res.data.body.list]
+        this.setState({
+          list:newlist
+        })
+        resolve()
       })
+      
+    })
+    // return fetch(`path/to/api?startIndex=${startIndex}&stopIndex=${stopIndex}`)
+    //   .then(response => {
+    //     // Store response data in list...
+    //   })
   }
   // 当前数据是否加载完成
   isRowLoaded=({ index })=>{

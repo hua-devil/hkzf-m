@@ -5,7 +5,7 @@ import './houselist.scss'
 import styles from './houselist.module.css'
 import { getCurrentCity } from '../../utils/index'
 import {API} from '../../utils/api'
-import {List,AutoSizer} from 'react-virtualized';
+import {List,AutoSizer,WindowScroller} from 'react-virtualized';
 import {BASE_URL} from '../../utils/url'
 export default class Houselist extends Component {
   state={
@@ -79,17 +79,22 @@ export default class Houselist extends Component {
     )
   }
   render() {
-    return (
-      <div className='houselist'>
+    return <div className='houselist'>
         {/* 搜索栏 */}
         <div className='header'>
           <i className='iconfont icon-back'></i>
           <SearchHeader cityname={this.state.cityname}></SearchHeader>
         </div>
         <Filter onFilter={this.onFilter}></Filter>
-        <AutoSizer>
-              {({ height, width }) => (
+        <WindowScroller>
+          {({height,isScrolling,onChildScroll,scrollTop})=>(
+            <AutoSizer>
+              {({ width }) => (
                 <List
+                  autoHeight
+                  scrollTop={scrollTop}
+                  onScroll={onChildScroll}
+                  isScrolling={isScrolling}
                   // 组件的宽度
                   width={width}
                   // 组件的高度
@@ -101,9 +106,11 @@ export default class Houselist extends Component {
                 />
                )}
            </AutoSizer>
+          )}
+        </WindowScroller>
       </div>
-    )
-
   }
 }
+
+
 

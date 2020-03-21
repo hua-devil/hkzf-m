@@ -6,6 +6,7 @@ import NavHeader from '../../components/NavHeader'
 import HouseItem from '../../components/HouseItem'
 import HousePackage from '../../components/HousePackage'
 import {BASE_URL} from '../../utils/url'
+import {API} from '../../utils/api'
 
 import styles from './index.module.css'
 
@@ -95,12 +96,57 @@ export default class HouseDetail extends Component {
   }
 
   componentDidMount() {
+    // 获取传来的id  路由参数
+    console.log(this.props)
+    let id = this.props.match.params.id
+    this.getHouseDetail(id)
     this.renderMap('天山星城', {
       latitude: '31.219228',
       longitude: '121.391768'
     })
   }
-
+  // 获取数据
+  async getHouseDetail(id){
+    let res = await API.get('/houses/'+id)
+    console.log('房子详情数据',res);
+    this.setState({
+      houseInfo:{
+        // 房屋图片
+      slides: res.data.body.houseImg,
+      // 地理位置
+      coord: res.data.body.coord,
+      // 小区名称
+      community:res.data.body.community,
+      // 标题
+      title: res.data.body.title,
+      // // 标签
+      tags: res.data.body.tags,
+      // 租金
+      price:  res.data.body.price,
+      // 房型
+      roomType:  res.data.body.roomType,
+      // 房屋面积
+      size:  res.data.body.size,
+      // 装修类型
+      renovation: '精装',
+      // 朝向
+      oriented:  res.data.body.oriented,
+      // 楼层
+      floor:  res.data.body.floor,
+      // 房屋配套
+      supporting: res.data.body.supporting,
+      // 房屋标识
+      houseCode: '',
+      // 房屋描述
+      description:  res.data.body.description
+      }
+    },()=>{
+      this.renderMap(this.state.houseInfo.community, {
+        latitude: this.state.houseInfo.coord.latitude,
+        longitude: this.state.houseInfo.coord.longitude
+      })
+    })
+  }
   // 渲染轮播图结构
   renderSwipers() {
     const {
@@ -109,8 +155,8 @@ export default class HouseDetail extends Component {
 
     return slides.map(item => (
       <a
-        key={item.id}
-        href="http://itcast.cn"
+        key={item}
+        href='http://itcast.cn'
         style={{
           display: 'inline-block',
           width: '100%',
@@ -118,7 +164,7 @@ export default class HouseDetail extends Component {
         }}
       >
         <img
-          src={BASE_URL + item.imgSrc}
+          src={BASE_URL + item}
           alt=""
           style={{ width: '100%', verticalAlign: 'top' }}
         />
@@ -156,7 +202,7 @@ export default class HouseDetail extends Component {
           className={styles.navHeader}
           rightContent={[<i key="share" className="iconfont icon-share" />]}
         >
-          天山星城
+          {this.state.houseInfo.community}
         </NavHeader>
 
         {/* 轮播图 */}
@@ -173,7 +219,7 @@ export default class HouseDetail extends Component {
         {/* 房屋基础信息 */}
         <div className={styles.info}>
           <h3 className={styles.infoTitle}>
-            整租 · 精装修，拎包入住，配套齐Q，价格优惠
+            {this.state.houseInfo.title}
           </h3>
           <Flex className={styles.tags}>
             <Flex.Item>
@@ -186,17 +232,17 @@ export default class HouseDetail extends Component {
           <Flex className={styles.infoPrice}>
             <Flex.Item className={styles.infoPriceItem}>
               <div>
-                8500
+                {this.state.houseInfo.price}
                 <span className={styles.month}>/月</span>
               </div>
               <div>租金</div>
             </Flex.Item>
             <Flex.Item className={styles.infoPriceItem}>
-              <div>1室1厅1卫</div>
+              <div>{this.state.houseInfo.roomType}</div>
               <div>房型</div>
             </Flex.Item>
             <Flex.Item className={styles.infoPriceItem}>
-              <div>78平米</div>
+              <div>{this.state.houseInfo.size}平米</div>
               <div>面积</div>
             </Flex.Item>
           </Flex>
@@ -209,12 +255,12 @@ export default class HouseDetail extends Component {
               </div>
               <div>
                 <span className={styles.title}>楼层：</span>
-                低楼层
+                {this.state.houseInfo.floor}
               </div>
             </Flex.Item>
             <Flex.Item>
               <div>
-                <span className={styles.title}>朝向：</span>南
+                <span className={styles.title}>朝向：</span>{this.state.houseInfo.oriented}
               </div>
               <div>
                 <span className={styles.title}>类型：</span>普通住宅
@@ -227,7 +273,7 @@ export default class HouseDetail extends Component {
         <div className={styles.map}>
           <div className={styles.mapTitle}>
             小区：
-            <span>天山星城</span>
+            <span>{this.state.houseInfo.community}</span>
           </div>
           <div className={styles.mapContainer} id="map">
             地图
@@ -272,10 +318,7 @@ export default class HouseDetail extends Component {
 
             <div className={styles.descText}>
               {/* {description || '暂无房屋描述'} */}
-              1.周边配套齐全，地铁四号线陶然亭站，交通便利，公交云集，距离北京南站、西站都很近距离。
-              2.小区规模大，配套全年，幼儿园，体育场，游泳馆，养老院，小学。
-              3.人车分流，环境优美。
-              4.精装两居室，居家生活方便，还有一个小书房，看房随时联系。
+              {this.state.houseInfo.description}
             </div>
           </div>
         </div>

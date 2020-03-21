@@ -21,6 +21,11 @@ export default class Sticky extends Component {
         cDiv.style.top=0
         cDiv.style.width='100%'
         cDiv.style.zIndex=999
+        // 让pDive高度设置为40px
+        pDiv.style.height='40px'
+      }else{
+        cDiv.style.position='static'
+        pDiv.style.height=0
       }
     })
   }

@@ -122,7 +122,7 @@ export default class Houselist extends Component {
           <SearchHeader cityname={this.state.cityname}></SearchHeader>
         </div>
         {/* <Filter onFilter={this.onFilter}></Filter> */}
-        <Sticky>
+        <Sticky height={40}>
           <Filter onFilter={this.onFilter}></Filter>
         </Sticky>
         <InfiniteLoader

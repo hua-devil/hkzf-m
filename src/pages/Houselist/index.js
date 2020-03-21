@@ -62,7 +62,11 @@ export default class Houselist extends Component {
       return <div key={key} style={style} className='loading'>正在加载……</div>
     }
     return (
-      <div className={styles.house} key={key} style={style}>
+      <div className={styles.house} key={key} 
+      style={style} 
+      onClick={()=>{
+        this.props.history.push("/detail/"+house.houseCode)
+      }}>
             <div className={styles.imgWrap}>
                 <img className={styles.img} src={BASE_URL+house.houseImg} alt="" />
             </div>

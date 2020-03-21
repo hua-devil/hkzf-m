@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
 import Filter from './components/Filter'
 import SearchHeader from '../../components/SearchHeader'
+import Sticky from '../../components/Sticky'
 import './houselist.scss'
 import styles from './houselist.module.css'
 import { getCurrentCity } from '../../utils/index'
 import {API} from '../../utils/api'
 import {List,AutoSizer,WindowScroller,InfiniteLoader} from 'react-virtualized';
 import {BASE_URL} from '../../utils/url'
+import { Toast } from 'antd-mobile';
+
 export default class Houselist extends Component {
   state={
     cityname:'',
@@ -32,6 +35,7 @@ export default class Houselist extends Component {
     this.searchhouselist()
   }
   searchhouselist = async()=>{
+    Toast.loading('正在加载...',0)
     let res = await API.get("/houses",{
       params:{
         cityId:this.state.cityId,
@@ -40,7 +44,9 @@ export default class Houselist extends Component {
         end:20
       }
     })
-    console.log('赛选出的数据',res);
+    Toast.hide()
+    // console.log('赛选出的数据',res);
+    Toast.info(`共有${res.data.body.count}套房子`)
     this.setState({
       count:res.data.body.count,
       list:res.data.body.list
@@ -80,7 +86,7 @@ export default class Houselist extends Component {
   }
   // 加载更多函数  
   loadMoreRows=({ startIndex, stopIndex })=>{
-    console.log('开始',startIndex,'结束',stopIndex);
+    // console.log('开始',startIndex,'结束',stopIndex);
     return new Promise((resolve,reject)=>{
       API.get("/houses",{
         params:{
@@ -90,7 +96,7 @@ export default class Houselist extends Component {
           end:stopIndex
         }
       }).then((res)=>{
-        console.log('加载更多res',res)
+        // console.log('加载更多res',res)
         let newlist = [...this.state.list, ...res.data.body.list]
         this.setState({
           list:newlist
@@ -115,7 +121,10 @@ export default class Houselist extends Component {
           <i className='iconfont icon-back'></i>
           <SearchHeader cityname={this.state.cityname}></SearchHeader>
         </div>
-        <Filter onFilter={this.onFilter}></Filter>
+        {/* <Filter onFilter={this.onFilter}></Filter> */}
+        <Sticky>
+          <Filter onFilter={this.onFilter}></Filter>
+        </Sticky>
         <InfiniteLoader
           isRowLoaded={this.isRowLoaded}  //当前数据是否加载完成
           loadMoreRows={this.loadMoreRows}   //加载更多函数

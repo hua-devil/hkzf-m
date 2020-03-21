@@ -5,7 +5,7 @@ import './houselist.scss'
 import styles from './houselist.module.css'
 import { getCurrentCity } from '../../utils/index'
 import {API} from '../../utils/api'
-import {List,AutoSizer,WindowScroller} from 'react-virtualized';
+import {List,AutoSizer,WindowScroller,InfiniteLoader} from 'react-virtualized';
 import {BASE_URL} from '../../utils/url'
 export default class Houselist extends Component {
   state={
@@ -78,6 +78,17 @@ export default class Houselist extends Component {
         </div>
     )
   }
+  // 加载更多函数
+  loadMoreRows=({ startIndex, stopIndex })=>{
+    return fetch(`path/to/api?startIndex=${startIndex}&stopIndex=${stopIndex}`)
+      .then(response => {
+        // Store response data in list...
+      })
+  }
+  // 当前数据是否加载完成
+  isRowLoaded=({ index })=>{
+    return !!this.state.list[index]; //转换布尔值
+  }
   render() {
     return <div className='houselist'>
         {/* 搜索栏 */}
@@ -86,28 +97,39 @@ export default class Houselist extends Component {
           <SearchHeader cityname={this.state.cityname}></SearchHeader>
         </div>
         <Filter onFilter={this.onFilter}></Filter>
-        <WindowScroller>
-          {({height,isScrolling,onChildScroll,scrollTop})=>(
-            <AutoSizer>
-              {({ width }) => (
-                <List
-                  autoHeight
-                  scrollTop={scrollTop}
-                  onScroll={onChildScroll}
-                  isScrolling={isScrolling}
-                  // 组件的宽度
-                  width={width}
-                  // 组件的高度
-                  height={height}
-                  rowCount={this.state.count} // List列表项总条目数
-                  // 每行的高度
-                  rowHeight={120} // 每一行高度
-                  rowRenderer={this.rowRenderer}
-                />
-               )}
-           </AutoSizer>
+        <InfiniteLoader
+          isRowLoaded={this.isRowLoaded}  //当前数据是否加载完成
+          loadMoreRows={this.loadMoreRows}   //加载更多函数
+          rowCount={this.state.count}
+        >
+          {({ onRowsRendered, registerChild }) => (
+            <WindowScroller>
+            {({height,isScrolling,onChildScroll,scrollTop})=>(
+              <AutoSizer>
+                {({ width }) => (
+                  <List
+                    onRowsRendered={onRowsRendered}
+                    ref={registerChild}
+                    autoHeight
+                    scrollTop={scrollTop}
+                    onScroll={onChildScroll}
+                    isScrolling={isScrolling}
+                    // 组件的宽度
+                    width={width}
+                    // 组件的高度
+                    height={height}
+                    rowCount={this.state.count} // List列表项总条目数
+                    // 每行的高度
+                    rowHeight={120} // 每一行高度
+                    rowRenderer={this.rowRenderer}
+                  />
+                 )}
+             </AutoSizer>
+            )}
+          </WindowScroller>
           )}
-        </WindowScroller>
+        </InfiniteLoader>,
+        
       </div>
   }
 }

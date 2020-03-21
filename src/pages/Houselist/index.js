@@ -9,7 +9,7 @@ import {API} from '../../utils/api'
 import {List,AutoSizer,WindowScroller,InfiniteLoader} from 'react-virtualized';
 import {BASE_URL} from '../../utils/url'
 import { Toast } from 'antd-mobile';
-
+import {Spring} from 'react-spring/renderprops'
 export default class Houselist extends Component {
   state={
     cityname:'',
@@ -116,11 +116,23 @@ export default class Houselist extends Component {
   }
   render() {
     return <div className='houselist'>
+        {/* 使用spring动画  from从开始效果  to 结束效果 */}
+        <Spring
+        config={{duration:3000}}
+        from={{ opacity: 0 }}
+        to={{ opacity: 1 }}>
+        {(props) => {
+          return <div style={props} className='header'>
+                  <i className='iconfont icon-back'></i>
+                  <SearchHeader cityname={this.state.cityname}></SearchHeader>
+                </div>
+        }}
+        </Spring>
         {/* 搜索栏 */}
-        <div className='header'>
+        {/* <div className='header'>
           <i className='iconfont icon-back'></i>
           <SearchHeader cityname={this.state.cityname}></SearchHeader>
-        </div>
+        </div> */}
         {/* <Filter onFilter={this.onFilter}></Filter> */}
         <Sticky height={40}>
           <Filter onFilter={this.onFilter}></Filter>

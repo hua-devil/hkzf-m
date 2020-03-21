@@ -56,7 +56,7 @@ export default class Filter extends Component {
   }
   // 父  点击确定得函数
   onSave=(value)=>{
-    console.log('确认的value值',value);
+    // console.log('确认的value值',value);
     let type = this.state.openType
     this.setState({
       selectedValues:{
@@ -65,7 +65,7 @@ export default class Filter extends Component {
       },
       openType:''    // 隐藏遮罩层
     },()=>{
-      console.log('修改后',this.state.selectedValues);
+      // console.log('修改后',this.state.selectedValues);
       let {area,mode,price,more} = this.state.selectedValues
       let filters = {}
       filters.mode = mode[0]
@@ -132,7 +132,8 @@ export default class Filter extends Component {
       return <FilterMore 
               defaultValues={defaultValues}
               data={data}
-              onSave={this.onSave} />
+              onSave={this.onSave}
+              onCancel={this.onCancel} />
     }
   }
   render() {

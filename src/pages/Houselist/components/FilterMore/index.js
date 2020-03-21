@@ -47,7 +47,7 @@ export default class FilterMore extends Component {
     return (
       <div className={styles.root}>
         {/* 遮罩层 */}
-        <div className={styles.mask} />
+        <div className={styles.mask} onClick={this.props.onCancel}/>
 
         {/* 条件内容 */}
         <div className={styles.tags}>
@@ -73,6 +73,7 @@ export default class FilterMore extends Component {
           this.setState({
             selectedValues:[]
           })
+          // this.props.onCancel()
         }}
         onSave={()=>{
           this.props.onSave(this.state.selectedValues)

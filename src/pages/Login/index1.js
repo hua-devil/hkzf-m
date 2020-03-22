@@ -7,8 +7,7 @@ import NavHeader from '../../components/NavHeader'
 
 import styles from './index.module.css'
 import {API} from '../../utils/api'
-import { withFormik,Form,Field,ErrorMessage } from 'formik'
-// 分别代替form   Field替换input
+import { withFormik } from 'formik'
 import * as Yup from 'yup'
 // 验证规则：
 // const REG_UNAME = /^[a-zA-Z_\d]{5,8}$/
@@ -55,6 +54,7 @@ class Login extends Component {
   //   }
   // }
   render() {
+    let {values,handleSubmit,handleChange,errors} = this.props
     return (
       <div className={styles.root}>
         {/* 顶部导航 */}
@@ -63,33 +63,47 @@ class Login extends Component {
 
         {/* 登录表单 */}
         <WingBlank>
-          <Form>
+          <form onSubmit={handleSubmit}>
             <div className={styles.formItem}>
-              <Field 
-              type="text"
-              name="username"
-              placeholder="请输入账号"
-              className={styles.input}
-              ></Field>
+              <input
+                value={values.username}
+                onChange={handleChange}
+                className={styles.input}
+                name="username"
+                placeholder="请输入账号"
+              />
             </div>
             {/* 长度为5到8位，只能出现数字、字母、下划线 */}
-            <ErrorMessage name='username' className={styles.error} component='div'></ErrorMessage>
+            {/* <div className={styles.error}>账号为必填项</div> */}
+            {errors.username
+              ?<div className={styles.error}>{errors.username}</div>
+              :null}
             <div className={styles.formItem}>
-              <Field
+              <input
+                value={values.password}
+                onChange={handleChange}
                 className={styles.input}
                 name="password"
                 type="password"
                 placeholder="请输入密码"
-              ></Field>
+              />
             </div>
             {/* 长度为5到12位，只能出现数字、字母、下划线 */}
-            <ErrorMessage name='password' className={styles.error} component='div'></ErrorMessage>
+            {/* <div className={styles.error}>账号为必填项</div> */}
+            {errors.username
+              ?<div className={styles.error}>{errors.password}</div>
+              :null}
             <div className={styles.formSubmit}>
+              {/* 
+                form表单提交事件onsubmit
+                注意：1.如果form表单里面又按钮，type='submit'，就会onsubmit提交 在form标签绑定
+                    2.如果type='button' 只是普通按钮，点击只是普通点击事件 
+               */}
               <button className={styles.submit} type="submit">
                 登 录
               </button>
             </div>
-          </Form>
+          </form>
           <Flex className={styles.backHome}>
             <Flex.Item>
               <Link to="/registe">还没有账号，去注册~</Link>

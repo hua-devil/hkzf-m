@@ -115,8 +115,8 @@ export default withFormik({
   // username:'要求不能为空'
   
   validationSchema:Yup.object().shape({
-    username:Yup.string().required('用户名不能为空').matches(/^\w{5,8}&$/, '长度为5到8位，只能出现数字、字母、下划线'),
-    password:Yup.string().required('密码不能为空').matches(/^\w{4,10}&$/,'长度为5到12位，只能出现数字、字母、下划线')
+    username:Yup.string().required('用户名不能为空').matches(/^\w{5,8}$/, '用户名长度为5到8位'),
+    password:Yup.string().required('密码不能为空').matches(/^\w{4,10}$/,'密码长度为5到12位')
   }),
   handleSubmit:async (values,{props})=>{
     console.log('登录values',values);

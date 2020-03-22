@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom'
 import { Grid, Button } from 'antd-mobile'
 
 import { BASE_URL } from '../../utils/url'
+import { API } from '../../utils/api'
 
 import styles from './index.module.css'
-import {isAuth} from '../../utils/token'
+import {isAuth,getToken} from '../../utils/token'
 
 // 菜单数据
 const menus = [
@@ -27,11 +28,37 @@ const DEFAULT_AVATAR = BASE_URL + '/img/profile/avatar.png'
 
 export default class Profile extends Component {
   state={
-    islogin:isAuth()     //true登录 
+    islogin:isAuth(),     //true登录 
+    userInfo:{
+      avatar:'',    // 头像
+      nickname:''     // 昵称
+    }
+  }
+  componentDidMount(){
+    this.getUserinfo()
+    console.log(this.state.islogin)
+  }
+  getUserinfo=async()=>{
+    if(!this.state.islogin) return
+    // 需要设置请求头
+    let token = getToken()
+    let res = await API.get('http://api-haoke-web.itheima.net/user',{
+      headers:{
+        authorization:token
+      }
+    })
+    console.log('用户数据',res)
+    if(res.data.status===200)
+      this.setState({
+        userInfo:{
+          avatar:res.data.body.avatar,    // 头像
+          nickname:res.data.body.nickname     // 昵称
+        }
+      })
   }
   render() {
     const { history } = this.props
-
+    let {userInfo} = this.state
     return (
       <div className={styles.root}>
         {/* 个人信息 */}
@@ -43,10 +70,10 @@ export default class Profile extends Component {
           />
           <div className={styles.info}>
             <div className={styles.myIcon}>
-              <img className={styles.avatar} src={DEFAULT_AVATAR} alt="icon" />
+              <img className={styles.avatar} src={userInfo.avatar?userInfo.avatar:DEFAULT_AVATAR} alt="icon" />
             </div>
             <div className={styles.user}>
-              <div className={styles.name}>游客</div>
+              <div className={styles.name}>{userInfo.nickname?userInfo.nickname:DEFAULT_AVATAR}</div>
               {/* 登录后展示： */}
               {this.state.islogin
               ?<>

@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Flex, WingBlank, WhiteSpace } from 'antd-mobile'
+import { Flex, WingBlank, WhiteSpace, Toast } from 'antd-mobile'
 
 import { Link } from 'react-router-dom'
 
 import NavHeader from '../../components/NavHeader'
 
 import styles from './index.module.css'
+import {API} from '../../utils/api'
 
 // 验证规则：
 // const REG_UNAME = /^[a-zA-Z_\d]{5,8}$/
@@ -29,9 +30,27 @@ class Login extends Component {
     })
   }
   // 表单点击提交
-  handleSubmit=(e)=>{
+  handleSubmit= async (e)=>{
     // 表单默认会刷新跳转  ，不行跳转就阻止默认行为
     e.preventDefault()
+    let {username,password} = this.state
+    if(username===''){
+      Toast.info('用户名不能为空',2)
+    }
+    if(password===''){
+      Toast.info('密码不能为空',2)
+    }
+    let res = await API.post('http://api-haoke-web.itheima.net/user/login',{
+      username,
+      password
+    })
+    console.log('登录结果',res);
+    if(res.data.status===200){
+      localStorage.setItem('my-token',res.data.body.token)
+      Toast.info('登录成功',1)
+    }else{
+      Toast.info(res.data.description,1)
+    }
   }
   render() {
     return (

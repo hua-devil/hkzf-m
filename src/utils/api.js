@@ -32,6 +32,7 @@ API.interceptors.response.use(function(response){
   }else if(response.data.status===501){
     console.log('服务器有问题，请稍等')
   }
+  return response
 })
 
 

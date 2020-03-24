@@ -8,6 +8,8 @@ import Map from './pages/Map'
 import HouseDetail from './pages/HouseDetail'
 import Login from './pages/Login'
 import Rent from './pages/Rent'
+import RentAdd from './pages/Rent/Add'
+import RentSearch from './pages/Rent/Search'
 // import {isAuth} from './utils/token'
 import AuthRoute from './components/AuthRoute'
 export default class App extends Component{
@@ -30,6 +32,8 @@ export default class App extends Component{
         {/* <Route exact path="/rent" component={Rent}></Route> */}
         
         <AuthRoute exact={true} path="/rent" Yemian={Rent}></AuthRoute>
+        <AuthRoute exact={true} path="/rent/add" Yemian={RentAdd}></AuthRoute>
+        <AuthRoute exact={true} path="/rent/search" Yemian={RentSearch}></AuthRoute>
         {/* 第二种写法 */}
         {/* <Route 
         exact path="/rent" 

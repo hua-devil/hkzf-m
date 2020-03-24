@@ -102,7 +102,7 @@ export default class HouseDetail extends Component {
     this.getHouseDetail(id)
     this.getFavorie()
   }
-  async getFavorie(){
+   getFavorie = async()=>{
     let id = this.props.match.params.id
     if(!isAuth()) return
     let res = await API.get('/user/favorites/'+id)

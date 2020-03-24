@@ -8,11 +8,11 @@ export default class AuthRoute extends Component {
     return <Route 
     exact ={exact}
     path={path}
-    render={(props)=>{
+    render={(newprops)=>{
       // 如果登录了，有token，就可以看rent
       // 如果没有登录，强制跳转登录
       if(isAuth()){
-        return <Yemian></Yemian>
+        return <Yemian {...newprops}></Yemian>
       }else{
         return <Redirect to="/login"></Redirect>
       }

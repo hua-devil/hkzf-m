@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 
 import { SearchBar } from 'antd-mobile'
 
-import { getCity } from '../../../utils'
+import { getCurrentCity } from '../../../utils'
+import { API } from '../../../utils/api'
 
 import styles from './index.module.css'
 
@@ -26,7 +27,33 @@ export default class Search extends Component {
       </li>
     ))
   }
-
+  changeValue=async(val)=>{
+    this.setState({
+      searchTxt:val
+    })
+    if(!val){
+      this.setState({
+        tipsList:[]
+      })
+      return
+    } 
+    // 发送ajax请求获取数据
+    let dingwei = await getCurrentCity()
+    clearTimeout(this.timeId)
+    this.timeId=setTimeout(async()=>{
+      let res = await API.get('/area/community',{
+        params:{
+          name:val,
+          id:dingwei.value
+        }
+      })
+      console.log('小区数组',res);
+      this.setState({
+        tipsList:res.data.body
+      })
+    },500)
+    
+  }
   render() {
     const { history } = this.props
     const { searchTxt } = this.state
@@ -36,6 +63,7 @@ export default class Search extends Component {
         {/* 搜索框 */}
         <SearchBar
           placeholder="请输入小区或地址"
+          onChange={this.changeValue}
           value={searchTxt}
           showCancelButton={true}
           onCancel={() => history.replace('/rent/add')}

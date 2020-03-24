@@ -12,7 +12,7 @@ const API = axios.create({
 // 请求拦截器
 // axios.interceptors.request.use(function(config){
 API.interceptors.request.use(function(config){
-  console.log('config',config)
+  // console.log('config',config)
   // startWith 以什么开头
   if(config.url.startsWith('/user') 
   && !config.url.startsWith('/user/registered')
@@ -25,7 +25,7 @@ API.interceptors.request.use(function(config){
 
 // 响应拦截器   同一判断状态码
 API.interceptors.response.use(function(response){
-  console.log('响应拦截器',response)
+  // console.log('响应拦截器',response)
   if(response.data.status===400){
     removeToken()
     console.log('token有问题，删了')

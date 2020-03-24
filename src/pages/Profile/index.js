@@ -7,7 +7,8 @@ import { BASE_URL } from '../../utils/url'
 import { API } from '../../utils/api'
 
 import styles from './index.module.css'
-import {isAuth,getToken,removeToken} from '../../utils/token'
+import {isAuth,removeToken} from '../../utils/token'
+// import {isAuth,getToken,removeToken} from '../../utils/token'
 
 // 菜单数据
 const menus = [
@@ -41,12 +42,14 @@ export default class Profile extends Component {
   getUserinfo=async()=>{
     if(!this.state.islogin) return
     // 需要设置请求头
-    let token = getToken()
-    let res = await API.get('/user',{
-      headers:{
-        authorization:token
-      }
-    })
+    // let token = getToken()
+    let res = await API.get('/user'
+    // ,{
+    //   headers:{
+    //     authorization:token
+    //   }
+    // }
+    )
     console.log('用户数据',res)
     if(res.data.status===200)
       this.setState({
@@ -60,17 +63,20 @@ export default class Profile extends Component {
   logout=()=>{
     Modal.alert('提示退出', '你确定要退出吗???', [
       { text: '取消', onPress: () => console.log('cancel') },
-      { text: '退出', onPress: async() => {
+      { text: '退出', 
+        onPress: async () => {
         console.log('退出了')
         // 发送请求
-        let token = getToken()
-        let res = await API.post('/user/logout',null,{
-          headers:{
-            authorization:token
-          }
-        })
+        // let token = getToken()
+        let res = await API.post('/user/logout',null
+        // ,{
+        //   headers:{
+        //     authorization:token
+        //   }
+        // }
+        )
         console.log('退出结果',res)
-        if(res.datd.status===200){
+        if(res.data.status===200){
           // 重新初始化数据
           // 移除本地token
           removeToken()
@@ -82,7 +88,7 @@ export default class Profile extends Component {
             }
           })
         }
-      } },
+      } }
     ])
   }
   render() {

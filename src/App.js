@@ -8,7 +8,8 @@ import Map from './pages/Map'
 import HouseDetail from './pages/HouseDetail'
 import Login from './pages/Login'
 import Rent from './pages/Rent'
-import {isAuth} from './utils/token'
+// import {isAuth} from './utils/token'
+import AuthRoute from './components/AuthRoute'
 export default class App extends Component{
   render() {
     return <BrowserRouter>
@@ -27,9 +28,10 @@ export default class App extends Component{
         <Route exact path="/login" component={Login}></Route>
         {/* 配置/rent房屋管理页面路由   第一种*/}
         {/* <Route exact path="/rent" component={Rent}></Route> */}
-      
+        
+        <AuthRoute exact={true} path="/rent" Yemian={Rent}></AuthRoute>
         {/* 第二种写法 */}
-        <Route 
+        {/* <Route 
         exact path="/rent" 
         render={(props)=>{
           // 如果登录了，有token，就可以看rent
@@ -39,7 +41,7 @@ export default class App extends Component{
           }else{
             return <Redirect to="/login"></Redirect>
           }
-        }}></Route>
+        }}></Route> */}
       </div>
     </BrowserRouter>
   }

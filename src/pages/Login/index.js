@@ -121,7 +121,7 @@ export default withFormik({
   handleSubmit:async (values,{props})=>{
     console.log('登录values',values);
     let {username,password} = values
-    let res = await API.post('http://api-haoke-web.itheima.net/user/login',{
+    let res = await API.post('/user/login',{
       username,
       password
     })

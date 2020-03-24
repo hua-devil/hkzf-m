@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 
 import { Link } from 'react-router-dom'
-import { Grid, Button } from 'antd-mobile'
+import { Grid, Button, Modal } from 'antd-mobile'
 
 import { BASE_URL } from '../../utils/url'
 import { API } from '../../utils/api'
 
 import styles from './index.module.css'
-import {isAuth,getToken} from '../../utils/token'
+import {isAuth,getToken,removeToken} from '../../utils/token'
 
 // 菜单数据
 const menus = [
@@ -42,7 +42,7 @@ export default class Profile extends Component {
     if(!this.state.islogin) return
     // 需要设置请求头
     let token = getToken()
-    let res = await API.get('http://api-haoke-web.itheima.net/user',{
+    let res = await API.get('/user',{
       headers:{
         authorization:token
       }
@@ -55,6 +55,35 @@ export default class Profile extends Component {
           nickname:res.data.body.nickname     // 昵称
         }
       })
+  }
+  // 点击退出弹窗框提示
+  logout=()=>{
+    Modal.alert('提示退出', '你确定要退出吗???', [
+      { text: '取消', onPress: () => console.log('cancel') },
+      { text: '退出', onPress: async() => {
+        console.log('退出了')
+        // 发送请求
+        let token = getToken()
+        let res = await API.post('/user/logout',null,{
+          headers:{
+            authorization:token
+          }
+        })
+        console.log('退出结果',res)
+        if(res.datd.status===200){
+          // 重新初始化数据
+          // 移除本地token
+          removeToken()
+          this.setState({
+            islogin:false,
+            userInfo:{
+              avatar:'',    // 头像
+              nickname:''     // 昵称
+            }
+          })
+        }
+      } },
+    ])
   }
   render() {
     const { history } = this.props
@@ -70,10 +99,10 @@ export default class Profile extends Component {
           />
           <div className={styles.info}>
             <div className={styles.myIcon}>
-              <img className={styles.avatar} src={userInfo.avatar?userInfo.avatar:DEFAULT_AVATAR} alt="icon" />
+              <img className={styles.avatar} src={userInfo.avatar || DEFAULT_AVATAR} alt="icon" />
             </div>
             <div className={styles.user}>
-              <div className={styles.name}>{userInfo.nickname?userInfo.nickname:DEFAULT_AVATAR}</div>
+              <div className={styles.name}>{userInfo.nickname || '游客'}</div>
               {/* 登录后展示： */}
               {this.state.islogin
               ?<>

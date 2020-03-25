@@ -22,7 +22,13 @@ export default class Search extends Component {
     const { tipsList } = this.state
 
     return tipsList.map(item => (
-      <li key={item.community} className={styles.tip}>
+      <li key={item.community} className={styles.tip}
+      onClick={()=>{
+        this.props.history.replace('/rent/add',{
+          name:item.communityName,
+          id:item.community
+        })
+      }}>
         {item.communityName}
       </li>
     ))
@@ -39,7 +45,6 @@ export default class Search extends Component {
     } 
     // 发送ajax请求获取数据
     let dingwei = await getCurrentCity()
-    clearTimeout(this.timeId)
     this.timeId=setTimeout(async()=>{
       let res = await API.get('/area/community',{
         params:{
@@ -51,7 +56,7 @@ export default class Search extends Component {
       this.setState({
         tipsList:res.data.body
       })
-    },500)
+    },1000)
     
   }
   render() {

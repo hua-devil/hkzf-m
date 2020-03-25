@@ -78,7 +78,15 @@ export default class RentAdd extends Component {
       description: ''
     }
   }
-
+  componentDidMount(){
+    console.log('rentadd的 props',this.props)
+    this.setState({
+      community:{
+        name:this.props.location.state.name,
+        id:this.props.location.state.id
+      }
+    })
+  }
   // 取消编辑，返回上一页
   onCancel = () => {
     alert('提示', '放弃发布房源?', [
@@ -121,7 +129,7 @@ export default class RentAdd extends Component {
             arrow="horizontal"
             onClick={() => history.replace('/rent/search')}
           >
-            小区名称
+            {community.name || '请输入小区名称'}
           </Item>
           <InputItem placeholder="请输入租金/月" extra="￥/月" value={price}>
             租&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金

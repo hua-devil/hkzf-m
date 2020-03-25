@@ -7,14 +7,15 @@ import {
   Picker,
   ImagePicker,
   TextareaItem,
-  Modal
+  Modal,
+  Toast
 } from 'antd-mobile'
 
 import NavHeader from '../../../components/NavHeader'
 import HousePackge from '../../../components/HousePackage'
 
 import styles from './index.module.css'
-
+import {API} from '../../../utils/api'
 const alert = Modal.alert
 
 // 房屋类型
@@ -79,7 +80,7 @@ export default class RentAdd extends Component {
     }
   }
   componentDidMount(){
-    console.log('rentadd的 props',this.props)
+    // console.log('rentadd的 props',this.props)
     if(this.props.location.state){
       this.setState({
       community:{
@@ -101,16 +102,75 @@ export default class RentAdd extends Component {
     ])
   }
   getValue=(name,val)=>{
-    console.log('获取的值',name,val)
+    // console.log('获取的值',name,val)
     this.setState({
       [name]:val
     })
   }
   handleSupporting=(arr)=>{
-    console.log('房屋配置数据',arr)
+    // console.log('房屋配置数据',arr)
     this.setState({
       supporting:arr.join('|')  //拆分成字符串
     })
+  }
+  // 房屋选择图片
+  handleHouseImg=(files,operation,index)=>{
+    // console.log('选择的图片数组files,老师地址',files)
+    // console.log('操作类型operation，添加add,删除remove',operation)
+    // console.log('添加位undefined，删除图片的索引index',index)
+    this.setState({
+      tempSlides:files
+    })
+  }
+  // 点击提交
+  addHouse=async()=>{
+    // this.state.tempSlides  临时图片地址
+    // ImagePicker拿到的是  临时的  使用  纯前端的  显示的
+    // 只是前端拿到了，通过fileReader 实现了预览  不是真正的上传
+    // 图片要发送请求上传到后台 后台返回服务器的图片地址
+    // 这才是真正的上传图片， 服务器存起来了
+    // 1.先把图片真正的上传处理了
+    let houseImg=''
+    console.log('临时图片',this.state.tempSlides)
+    if(this.state.tempSlides.length>0){
+      // 循环图片数组
+      // ajax上传图片文件必须配合DormData
+      // FormData 是原生js自带的应该对象 专门用来配合ajax上传文件
+      // 1.new一下
+      let formdata = new FormData();
+      // 2.追加参数  formdata.append('参数名',值)
+      // formdata.append('参数名',图片对象)
+      this.state.tempSlides.forEach((item)=>{
+        formdata.append('file',item.file)
+      })
+      let res = await API.post("/houses/image",formdata,{
+        headers:{
+          "Content-Type":"multipart/form-data"  //图片必须
+        }
+      })
+      console.log('上传图片的结果',res);
+      houseImg = res.data.body.join('|')
+    }
+    let house={
+      houseImg:houseImg,
+      title:this.state.title,
+      description:this.state.description,
+      oriented:this.state.oriented,
+      supporting:this.state.supporting,
+      price:this.state.price,
+      rommType:this.state.rommType,
+      size:this.state.size,
+      floor:this.state.floor,
+      community:this.state.community.id
+    }
+    let houseRes = await API.post('/user/houses',house)
+    console.log('发布结果',houseRes);
+    if(houseRes.data.status===200){
+      Toast.info('发布成功',1)
+      this.props.history.push('/rent')
+    }else {
+      Toast.info('服务器偷懒了，请稍后再试~', 2, null, false)
+    }
   }
   render() {
     const Item = List.Item
@@ -205,9 +265,10 @@ export default class RentAdd extends Component {
           data-role="rent-list"
         >
           <ImagePicker
-            files={tempSlides}
-            multiple={true}
+            files={tempSlides}    // false  显示在页面的图片 数组
+            multiple={true}   // 是否同时选择多个图片 true可以
             className={styles.imgpicker}
+            onChange={this.handleHouseImg}
           />
         </List>
 

@@ -106,6 +106,12 @@ export default class RentAdd extends Component {
       [name]:val
     })
   }
+  handleSupporting=(arr)=>{
+    console.log('房屋配置数据',arr)
+    this.setState({
+      supporting:arr.join('|')  //拆分成字符串
+    })
+  }
   render() {
     const Item = List.Item
     const { history } = this.props
@@ -120,7 +126,7 @@ export default class RentAdd extends Component {
       tempSlides,
       title
     } = this.state
-
+    
     return (
       <div className={styles.root}>
         <NavHeader onLeftClick={this.onCancel}>发布房源</NavHeader>
@@ -210,7 +216,8 @@ export default class RentAdd extends Component {
           renderHeader={() => '房屋配置'}
           data-role="rent-list"
         >
-          <HousePackge select />
+          <HousePackge select 
+          onSelect={this.handleSupporting} />
         </List>
 
         <List
